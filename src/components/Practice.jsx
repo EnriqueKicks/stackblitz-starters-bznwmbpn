@@ -12,16 +12,23 @@ export default function Practice({ speakWord }) {
     setShuffled(words.slice().sort(() => Math.random() - 0.5));
   }, []);
 
-  useEffect(() => inputRef.current?.focus(), [index]);
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [index]);
 
   const current = shuffled[index] || { word: "", image: null };
 
   const check = () => {
     const ans = (input || "").trim().toLowerCase();
     if (!current.word) return;
+
     if (ans === current.word.toLowerCase()) {
       setFeedback("✅ Correcto");
-      setTimeout(() => { setIndex(i => i + 1); setInput(""); setFeedback(""); }, 700);
+      setTimeout(() => {
+        setIndex((i) => i + 1);
+        setInput("");
+        setFeedback("");
+      }, 700);
     } else {
       setFeedback(`❌ Incorrecto. Era: ${current.word}`);
     }
@@ -32,12 +39,34 @@ export default function Practice({ speakWord }) {
       <h2>Modo Práctica</h2>
 
       {current.image && (
-        <img src={current.image} alt={current.word} style={{ width: 300, height: 180, objectFit: "cover", borderRadius: 8 }} />
+        <img
+          src={current.image}
+          alt={current.word}
+          style={{
+            width: "100%",
+            maxHeight: "200px",
+            objectFit: "contain",
+            borderRadius: "8px",
+            marginBottom: "10px"
+          }}
+        />
       )}
 
       <div style={{ marginTop: 10 }}>
-        <button onClick={() => speakWord(current.word)}>🔊 Escuchar</button>
-        <button onClick={() => setFeedback(`Pista: comienza con "${current.word.charAt(0)}"`)} style={{ marginLeft: 8 }}>💡 Pista</button>
+        <button onClick={() => speakWord(current.word)}>
+          🔊 Escuchar
+        </button>
+
+        <button
+          onClick={() =>
+            setFeedback(
+              `💡 Pista: comienza con "${current.word.charAt(0)}"`
+            )
+          }
+          style={{ marginLeft: 8 }}
+        >
+          💡 Pista
+        </button>
       </div>
 
       <input
@@ -45,8 +74,10 @@ export default function Practice({ speakWord }) {
         className="input"
         placeholder="Escribe la palabra..."
         value={input}
-        onChange={e => setInput(e.target.value)}
-        onKeyDown={e => { if (e.key === "Enter") check(); }}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") check();
+        }}
         style={{ marginTop: 10 }}
       />
 
