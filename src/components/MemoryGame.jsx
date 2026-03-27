@@ -12,6 +12,11 @@ export default function MemoryGame({ speakWord }) {
   const [lock, setLock] = useState(false);
   const [completed, setCompleted] = useState(false);
 
+  // 🔊 SONIDOS
+  const correctSound = new Audio("/correct.mp3");
+  const wrongSound = new Audio("/wrong.mp3");
+  const winSound = new Audio("/win.mp3");
+
   const generateGame = () => {
     const pairCount = levels[level];
 
@@ -52,6 +57,8 @@ export default function MemoryGame({ speakWord }) {
       const [a, b] = newSelected;
 
       if (a.word === b.word && a.type !== b.type) {
+        correctSound.play(); // ✅ sonido correcto
+
         const newMatched = [...matched, a.word];
         setMatched(newMatched);
         setScore((prev) => prev + 1);
@@ -59,9 +66,12 @@ export default function MemoryGame({ speakWord }) {
         setLock(false);
 
         if (newMatched.length === levels[level]) {
+          winSound.play(); // 🏆 sonido victoria
           setCompleted(true);
         }
       } else {
+        wrongSound.play(); // ❌ sonido error
+
         setTimeout(() => {
           setSelected([]);
           setLock(false);
