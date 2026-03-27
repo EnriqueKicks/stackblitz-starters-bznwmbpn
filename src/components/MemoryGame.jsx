@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { words } from "../data/words";
 
-const levels = [6, 8, 10]; // pares por nivel
+const levels = [6, 8, 10];
 
 export default function MemoryGame({ speakWord }) {
   const [level, setLevel] = useState(0);
@@ -21,18 +21,8 @@ export default function MemoryGame({ speakWord }) {
       .slice(0, pairCount);
 
     const gameCards = selectedWords.flatMap((w, i) => [
-      {
-        id: `${i}-img`,
-        type: "image",
-        word: w.word,
-        image: w.image
-      },
-      {
-        id: `${i}-text`,
-        type: "text",
-        word: w.word,
-        image: w.image
-      }
+      { id: `${i}-img`, type: "image", word: w.word, image: w.image },
+      { id: `${i}-text`, type: "text", word: w.word, image: w.image }
     ]);
 
     setCards(gameCards.sort(() => Math.random() - 0.5));
@@ -156,9 +146,6 @@ export default function MemoryGame({ speakWord }) {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
     </div>
   );
 }
