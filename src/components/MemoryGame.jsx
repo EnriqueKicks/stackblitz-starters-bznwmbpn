@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { words } from "../data/words";
 
+const levels = [6, 8, 10]; // pares por nivel
+
 export default function MemoryGame({ speakWord }) {
+  const [level, setLevel] = useState(0);
   const [cards, setCards] = useState([]);
   const [selected, setSelected] = useState([]);
   const [matched, setMatched] = useState([]);
   const [score, setScore] = useState(0);
   const [lock, setLock] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
-  useEffect(() => {
-    // tomar 6 palabras aleatorias
+  const generateGame = () => {
+    const pairCount = levels[level];
+
     const selectedWords = words
       .slice()
       .sort(() => Math.random() - 0.5)
-      .slice(0, 6);
+      .slice(0, pairCount);
 
-    // crear pares (imagen + texto)
     const gameCards = selectedWords.flatMap((w, i) => [
       {
         id: `${i}-img`,
@@ -31,11 +35,16 @@ export default function MemoryGame({ speakWord }) {
       }
     ]);
 
-    // mezclar
-    const shuffled = gameCards.sort(() => Math.random() - 0.5);
+    setCards(gameCards.sort(() => Math.random() - 0.5));
+    setSelected([]);
+    setMatched([]);
+    setScore(0);
+    setCompleted(false);
+  };
 
-    setCards(shuffled);
-  }, []);
+  useEffect(() => {
+    generateGame();
+  }, [level]);
 
   const handleClick = (card) => {
     if (lock) return;
@@ -53,16 +62,29 @@ export default function MemoryGame({ speakWord }) {
       const [a, b] = newSelected;
 
       if (a.word === b.word && a.type !== b.type) {
-        setMatched((prev) => [...prev, a.word]);
+        const newMatched = [...matched, a.word];
+        setMatched(newMatched);
         setScore((prev) => prev + 1);
         setSelected([]);
         setLock(false);
+
+        if (newMatched.length === levels[level]) {
+          setCompleted(true);
+        }
       } else {
         setTimeout(() => {
           setSelected([]);
           setLock(false);
         }, 1000);
       }
+    }
+  };
+
+  const nextLevel = () => {
+    if (level < levels.length - 1) {
+      setLevel((prev) => prev + 1);
+    } else {
+      alert("🎉 ¡Terminaste todos los niveles!");
     }
   };
 
@@ -78,8 +100,18 @@ export default function MemoryGame({ speakWord }) {
       <h2>Memorama 🧠</h2>
 
       <div style={{ marginBottom: 10 }}>
-        Puntos: {score} / 6
+        Nivel: {level + 1} | Puntos: {score} / {levels[level]}
       </div>
+
+      {completed && (
+        <div style={{ marginBottom: 10 }}>
+          🎉 ¡Nivel completado!
+          <br />
+          <button onClick={nextLevel} style={{ marginTop: 5 }}>
+            Siguiente nivel ➡️
+          </button>
+        </div>
+      )}
 
       <div
         style={{
@@ -124,6 +156,9 @@ export default function MemoryGame({ speakWord }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
     </div>
   );
 }
