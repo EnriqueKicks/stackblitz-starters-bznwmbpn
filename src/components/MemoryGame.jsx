@@ -104,14 +104,23 @@ export default function MemoryGame({ speakWord }) {
       </div>
 
       {completed && (
-        <div style={{ marginBottom: 10 }}>
-          🎉 ¡Nivel completado!
-          <br />
-          <button onClick={nextLevel} style={{ marginTop: 5 }}>
-            Siguiente nivel ➡️
-          </button>
-        </div>
-      )}
+  <div style={{ marginBottom: 10 }}>
+    🎉 ¡Nivel completado!
+    <br />
+
+    <div style={{ display: "flex", gap: "10px", marginTop: 8 }}>
+      
+      <button onClick={generateGame}>
+        🔁 Reintentar nivel
+      </button>
+
+      <button onClick={nextLevel}>
+        ➡️ Siguiente nivel
+      </button>
+
+    </div>
+  </div>
+)}
 
       <div
         style={{
