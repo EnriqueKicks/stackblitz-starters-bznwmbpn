@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { words } from "../data/words";
+import Stars from "./Stars";
 
 const levels = [6, 8, 10];
 
@@ -11,6 +12,7 @@ export default function MemoryGame({ speakWord }) {
   const [score, setScore] = useState(0);
   const [lock, setLock] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [errors, setErrors] = useState(0); // 🔥 NUEVO
 
   // 🔊 SONIDOS
   const correctSound = new Audio("/correct.mp3");
@@ -35,6 +37,7 @@ export default function MemoryGame({ speakWord }) {
     setMatched([]);
     setScore(0);
     setCompleted(false);
+    setErrors(0); // 🔥 reset errores
   };
 
   useEffect(() => {
@@ -57,7 +60,7 @@ export default function MemoryGame({ speakWord }) {
       const [a, b] = newSelected;
 
       if (a.word === b.word && a.type !== b.type) {
-        correctSound.play(); // ✅ sonido correcto
+        correctSound.play();
 
         const newMatched = [...matched, a.word];
         setMatched(newMatched);
@@ -66,11 +69,12 @@ export default function MemoryGame({ speakWord }) {
         setLock(false);
 
         if (newMatched.length === levels[level]) {
-          winSound.play(); // 🏆 sonido victoria
+          winSound.play();
           setCompleted(true);
         }
       } else {
-        wrongSound.play(); // ❌ sonido error
+        wrongSound.play();
+        setErrors((prev) => prev + 1); // 🔥 contar error
 
         setTimeout(() => {
           setSelected([]);
@@ -95,32 +99,42 @@ export default function MemoryGame({ speakWord }) {
     );
   };
 
+  // ⭐ calcular estrellas
+  const getStarsFromErrors = () => {
+    if (errors <= 2) return 3;
+    if (errors <= 5) return 2;
+    return 1;
+  };
+
   return (
     <div className="card">
       <h2>Memorama 🧠</h2>
 
       <div style={{ marginBottom: 10 }}>
         Nivel: {level + 1} | Puntos: {score} / {levels[level]}
+        <br />
+        ❌ Errores: {errors}
       </div>
 
       {completed && (
-  <div style={{ marginBottom: 10 }}>
-    🎉 ¡Nivel completado!
-    <br />
+        <div style={{ marginBottom: 10 }}>
+          🎉 ¡Nivel completado!
+          <br />
 
-    <div style={{ display: "flex", gap: "10px", marginTop: 8 }}>
-      
-      <button onClick={generateGame}>
-        🔁 Reintentar nivel
-      </button>
+          {/* ⭐ ESTRELLAS */}
+          <Stars count={getStarsFromErrors()} />
 
-      <button onClick={nextLevel}>
-        ➡️ Siguiente nivel
-      </button>
+          <div style={{ display: "flex", gap: "10px", marginTop: 8 }}>
+            <button onClick={generateGame}>
+              🔁 Reintentar nivel
+            </button>
 
-    </div>
-  </div>
-)}
+            <button onClick={nextLevel}>
+              ➡️ Siguiente nivel
+            </button>
+          </div>
+        </div>
+      )}
 
       <div
         style={{
