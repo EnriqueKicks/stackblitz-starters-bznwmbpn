@@ -14,7 +14,6 @@ export default function MemoryGame({ speakWord }) {
   const [completed, setCompleted] = useState(false);
   const [errors, setErrors] = useState(0);
 
-  // 🔊 SONIDOS
   const correctSound = new Audio("/correct.mp3");
   const wrongSound = new Audio("/wrong.mp3");
   const winSound = new Audio("/win.mp3");
@@ -99,58 +98,42 @@ export default function MemoryGame({ speakWord }) {
     );
   };
 
-  // ⭐ estrellas según errores
   const getStarsFromErrors = () => {
     if (errors <= 2) return 3;
     if (errors <= 5) return 2;
     return 1;
   };
 
+  // 🔥 SI TERMINÓ EL NIVEL → SOLO MOSTRAR RESULTADO
+  if (completed) {
+    return (
+      <div className="card" style={{ textAlign: "center" }}>
+        <h2>🎉 ¡Nivel completado!</h2>
+
+        <p>Errores: {errors}</p>
+
+        <Stars count={getStarsFromErrors()} />
+
+        <div style={{ marginTop: 15 }}>
+          <button onClick={generateGame} style={{ marginRight: 10 }}>
+            🔁 Reintentar
+          </button>
+
+          <button onClick={nextLevel}>
+            ➡️ Siguiente nivel
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="card">
       <h2>Memorama 🧠</h2>
 
       <div style={{ marginBottom: 10 }}>
-        Nivel: {level + 1} | Puntos: {score} / {levels[level]}
-        <br />
-        ❌ Errores: {errors}
+        Nivel: {level + 1} | ❌ Errores: {errors}
       </div>
-
-      {/* 🎉 PANTALLA DE RESULTADO */}
-      {completed && (
-        <div
-          style={{
-            marginTop: 15,
-            padding: 15,
-            background: "#dfffe0",
-            borderRadius: 10,
-            textAlign: "center"
-          }}
-        >
-          <h3>🎉 ¡Nivel completado!</h3>
-
-          <p>Errores: {errors}</p>
-
-         <Stars count={3} />
-
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              justifyContent: "center",
-              marginTop: 10
-            }}
-          >
-            <button onClick={generateGame}>
-              🔁 Reintentar nivel
-            </button>
-
-            <button onClick={nextLevel}>
-              ➡️ Siguiente nivel
-            </button>
-          </div>
-        </div>
-      )}
 
       <div
         style={{
