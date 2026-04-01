@@ -12,7 +12,7 @@ export default function MemoryGame({ speakWord }) {
   const [score, setScore] = useState(0);
   const [lock, setLock] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [errors, setErrors] = useState(0); // 🔥 NUEVO
+  const [errors, setErrors] = useState(0);
 
   // 🔊 SONIDOS
   const correctSound = new Audio("/correct.mp3");
@@ -37,7 +37,7 @@ export default function MemoryGame({ speakWord }) {
     setMatched([]);
     setScore(0);
     setCompleted(false);
-    setErrors(0); // 🔥 reset errores
+    setErrors(0);
   };
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function MemoryGame({ speakWord }) {
         }
       } else {
         wrongSound.play();
-        setErrors((prev) => prev + 1); // 🔥 contar error
+        setErrors((prev) => prev + 1);
 
         setTimeout(() => {
           setSelected([]);
@@ -99,7 +99,7 @@ export default function MemoryGame({ speakWord }) {
     );
   };
 
-  // ⭐ calcular estrellas
+  // ⭐ estrellas según errores
   const getStarsFromErrors = () => {
     if (errors <= 2) return 3;
     if (errors <= 5) return 2;
@@ -116,15 +116,31 @@ export default function MemoryGame({ speakWord }) {
         ❌ Errores: {errors}
       </div>
 
+      {/* 🎉 PANTALLA DE RESULTADO */}
       {completed && (
-        <div style={{ marginBottom: 10 }}>
-          🎉 ¡Nivel completado!
-          <br />
+        <div
+          style={{
+            marginTop: 15,
+            padding: 15,
+            background: "#dfffe0",
+            borderRadius: 10,
+            textAlign: "center"
+          }}
+        >
+          <h3>🎉 ¡Nivel completado!</h3>
 
-          {/* ⭐ ESTRELLAS */}
+          <p>Errores: {errors}</p>
+
           <Stars count={getStarsFromErrors()} />
 
-          <div style={{ display: "flex", gap: "10px", marginTop: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "center",
+              marginTop: 10
+            }}
+          >
             <button onClick={generateGame}>
               🔁 Reintentar nivel
             </button>
