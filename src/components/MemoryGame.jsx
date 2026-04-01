@@ -131,7 +131,7 @@ export default function MemoryGame({ speakWord }) {
 
           <p>Errores: {errors}</p>
 
-          <Stars count={getStarsFromErrors()} />
+         <Stars count={3} />
 
           <div
             style={{
