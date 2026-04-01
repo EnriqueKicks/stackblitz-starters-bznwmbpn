@@ -1,9 +1,9 @@
-const Stars = ({ count }) => {
+export default function Stars({ count = 0 }) {
   return (
-    <div style={{ fontSize: "30px", margin: "10px" }}>
-      {"⭐".repeat(count)}
+    <div style={{ fontSize: "40px", marginTop: "10px" }}>
+      {count === 3 && "⭐⭐⭐"}
+      {count === 2 && "⭐⭐"}
+      {count === 1 && "⭐"}
     </div>
   );
-};
-
-export default Stars;
+}
