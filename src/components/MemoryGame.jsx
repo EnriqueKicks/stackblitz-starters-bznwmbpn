@@ -15,6 +15,7 @@ export default function MemoryGame({ speakWord }) {
   const [errors, setErrors] = useState(0);
 
   const correctSound = new Audio("/correct.mp3");
+correctSound.volume = 0.4;
   const wrongSound = new Audio("/wrong.mp3");
   const winSound = new Audio("/win.mp3");
 
