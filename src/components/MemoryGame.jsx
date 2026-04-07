@@ -15,7 +15,8 @@ export default function MemoryGame({ speakWord }) {
   const [errors, setErrors] = useState(0);
 
   const correctSound = new Audio("/correct.mp3");
-correctSound.volume = 0.4;
+  correctSound.volume = 0.4;
+
   const wrongSound = new Audio("/wrong.mp3");
   const winSound = new Audio("/win.mp3");
 
@@ -46,8 +47,15 @@ correctSound.volume = 0.4;
 
   const handleClick = (card) => {
     if (lock) return;
-    if (selected.find((c) => c.id === card.id)) return;
-    if (matched.includes(card.word)) return;
+
+    // 🔊 PERMITIR VOLVER A ESCUCHAR CARTAS YA VOLTEADAS
+    if (
+      selected.find((c) => c.id === card.id) ||
+      matched.includes(card.word)
+    ) {
+      speakWord(card.word);
+      return;
+    }
 
     speakWord(card.word);
 
@@ -105,7 +113,7 @@ correctSound.volume = 0.4;
     return 1;
   };
 
-  // 🔥 SI TERMINÓ EL NIVEL → SOLO MOSTRAR RESULTADO
+  // 🔥 PANTALLA FINAL
   if (completed) {
     return (
       <div className="card" style={{ textAlign: "center" }}>
