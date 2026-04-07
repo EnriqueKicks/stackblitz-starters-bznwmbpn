@@ -9,7 +9,6 @@ export default function MemoryGame({ speakWord }) {
   const [cards, setCards] = useState([]);
   const [selected, setSelected] = useState([]);
   const [matched, setMatched] = useState([]);
-  const [score, setScore] = useState(0);
   const [lock, setLock] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [errors, setErrors] = useState(0);
@@ -36,7 +35,6 @@ export default function MemoryGame({ speakWord }) {
     setCards(gameCards.sort(() => Math.random() - 0.5));
     setSelected([]);
     setMatched([]);
-    setScore(0);
     setCompleted(false);
     setErrors(0);
   };
@@ -48,7 +46,7 @@ export default function MemoryGame({ speakWord }) {
   const handleClick = (card) => {
     if (lock) return;
 
-    // 🔊 PERMITIR VOLVER A ESCUCHAR CARTAS YA VOLTEADAS
+    // 🔊 Permitir repetir sonido
     if (
       selected.find((c) => c.id === card.id) ||
       matched.includes(card.word)
@@ -72,7 +70,6 @@ export default function MemoryGame({ speakWord }) {
 
         const newMatched = [...matched, a.word];
         setMatched(newMatched);
-        setScore((prev) => prev + 1);
         setSelected([]);
         setLock(false);
 
@@ -113,14 +110,12 @@ export default function MemoryGame({ speakWord }) {
     return 1;
   };
 
-  // 🔥 PANTALLA FINAL
+  // 🎉 PANTALLA FINAL
   if (completed) {
     return (
       <div className="card" style={{ textAlign: "center" }}>
         <h2>🎉 ¡Nivel completado!</h2>
-
         <p>Errores: {errors}</p>
-
         <Stars count={getStarsFromErrors()} />
 
         <div style={{ marginTop: 15 }}>
@@ -151,41 +146,44 @@ export default function MemoryGame({ speakWord }) {
           gap: "10px"
         }}
       >
-        {cards.map((card) => (
-          <div
-            key={card.id}
-            onClick={() => handleClick(card)}
-            style={{
-              height: "100px",
-              background: "#eee",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontSize: "18px",
-              fontWeight: "bold"
-            }}
-          >
-            {isFlipped(card) ? (
-              card.type === "image" ? (
-                <img
-                  src={card.image}
-                  alt={card.word}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain"
-                  }}
-                />
-              ) : (
-                card.word
-              )
-            ) : (
-              "❓"
-            )}
-          </div>
-        ))}
+        {cards.map((card) => {
+          const flipped = isFlipped(card);
+
+          return (
+            <div
+              key={card.id}
+              className="card-container"
+              onClick={() => handleClick(card)}
+              style={{ height: "100px", cursor: "pointer" }}
+            >
+              <div className={`card-inner ${flipped ? "flipped" : ""}`}>
+                
+                {/* FRONT */}
+                <div className="card-face card-front">
+                  ❓
+                </div>
+
+                {/* BACK */}
+                <div className="card-face card-back">
+                  {card.type === "image" ? (
+                    <img
+                      src={card.image}
+                      alt={card.word}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain"
+                      }}
+                    />
+                  ) : (
+                    card.word
+                  )}
+                </div>
+
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
