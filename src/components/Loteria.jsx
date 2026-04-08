@@ -7,6 +7,9 @@ export default function Loteria({ speakWord }) {
   const [marked, setMarked] = useState([]);
   const [completed, setCompleted] = useState(false);
 
+  const successSound = new Audio("/success.mp3");
+  successSound.volume = 0.5;
+
   const generateBoard = () => {
     const selected = words
       .slice()
@@ -20,7 +23,6 @@ export default function Loteria({ speakWord }) {
     pickWord(selected, []);
   };
 
-  // 🔥 SOLO PALABRAS NO MARCADAS
   const pickWord = (list = board, markedList = marked) => {
     const available = list.filter(w => !markedList.includes(w.word));
 
@@ -44,13 +46,13 @@ export default function Loteria({ speakWord }) {
       setMarked(prev => {
         if (prev.includes(item.word)) return prev;
 
+        successSound.play(); // 🔊 sonido
+
         const newMarked = [...prev, item.word];
 
-        // 🏆 GANAR
         if (newMarked.length === board.length) {
           setCompleted(true);
         } else {
-          // 🔥 IMPORTANTE: usar newMarked actualizado
           pickWord(board, newMarked);
         }
 
@@ -63,7 +65,7 @@ export default function Loteria({ speakWord }) {
     <div className="card">
       <h2>Lotería 🪅</h2>
 
-      {currentWord && (
+      {currentWord && !completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
           <div className="small">Escucha y busca:</div>
           <h3>{currentWord.word}</h3>
@@ -74,9 +76,14 @@ export default function Loteria({ speakWord }) {
         </div>
       )}
 
+      {/* 🎉 CONFETTI SIMULADO */}
       {completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
-          <h3>🎉 ¡LOTERÍA!</h3>
+          <h3>🎉 ¡LOTERÍA! 🎉</h3>
+
+          <div style={{ fontSize: "30px", margin: "10px 0" }}>
+            🎊 🎉 ✨ 🎊 🎉 ✨
+          </div>
 
           <button onClick={generateBoard}>
             🔁 Nuevo juego
@@ -106,7 +113,9 @@ export default function Loteria({ speakWord }) {
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-                position: "relative"
+                position: "relative",
+                transition: "transform 0.2s",
+                transform: isMarked ? "scale(1.05)" : "scale(1)"
               }}
             >
               <img
@@ -125,7 +134,7 @@ export default function Loteria({ speakWord }) {
                     position: "absolute",
                     top: 5,
                     right: 5,
-                    fontSize: "20px"
+                    fontSize: "22px"
                   }}
                 >
                   ✅
