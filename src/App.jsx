@@ -3,6 +3,7 @@ import Flashcards from "./components/Flashcards";
 import Practice from "./components/Practice";
 import Exam from "./components/Exam";
 import MemoryGame from "./components/MemoryGame";
+import Loteria from "./components/Loteria";
 
 function speakWord(word, mode = "normal") {
 
