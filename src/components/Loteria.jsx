@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { words } from "../data/words";
+import confetti from "canvas-confetti";
 
 export default function Loteria({ speakWord }) {
   const [board, setBoard] = useState([]);
@@ -10,8 +11,16 @@ export default function Loteria({ speakWord }) {
   const successSound = new Audio("/success.mp3");
   successSound.volume = 0.5;
 
-  const winSound = new Audio("/win.mp3"); // 🏆 NUEVO
+  const winSound = new Audio("/win.mp3");
   winSound.volume = 0.6;
+
+  const launchConfetti = () => {
+    confetti({
+      particleCount: 120,
+      spread: 80,
+      origin: { y: 0.6 }
+    });
+  };
 
   const generateBoard = () => {
     const selected = words
@@ -55,7 +64,8 @@ export default function Loteria({ speakWord }) {
         const newMarked = [...prev, item.word];
 
         if (newMarked.length === board.length) {
-          winSound.play(); // 🏆 SONIDO DE VICTORIA
+          winSound.play();
+          launchConfetti(); // 🎉 AQUÍ DISPARA
           setCompleted(true);
         } else {
           pickWord(board, newMarked);
@@ -86,10 +96,6 @@ export default function Loteria({ speakWord }) {
       {completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
           <h3>🎉 ¡LOTERÍA! 🎉</h3>
-
-          <div style={{ fontSize: "30px", margin: "10px 0" }}>
-            🎊 🎉 ✨ 🎊 🎉 ✨
-          </div>
 
           <button onClick={generateBoard}>
             🔁 Nuevo juego
