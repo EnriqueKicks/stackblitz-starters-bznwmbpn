@@ -10,6 +10,9 @@ export default function Loteria({ speakWord }) {
   const successSound = new Audio("/success.mp3");
   successSound.volume = 0.5;
 
+  const winSound = new Audio("/win.mp3"); // 🏆 NUEVO
+  winSound.volume = 0.6;
+
   const generateBoard = () => {
     const selected = words
       .slice()
@@ -38,23 +41,21 @@ export default function Loteria({ speakWord }) {
   }, []);
 
   const handleClick = (item) => {
-
-    // 👉 si ya terminó o no hay palabra → solo repetir
     if (!currentWord || completed) {
       speakWord(item.word);
       return;
     }
 
-    // 👉 si acierta
     if (item.word === currentWord.word) {
       setMarked(prev => {
         if (prev.includes(item.word)) return prev;
 
-        successSound.play(); // 🔊 SOLO sonido (ya no voz)
+        successSound.play();
 
         const newMarked = [...prev, item.word];
 
         if (newMarked.length === board.length) {
+          winSound.play(); // 🏆 SONIDO DE VICTORIA
           setCompleted(true);
         } else {
           pickWord(board, newMarked);
@@ -62,9 +63,7 @@ export default function Loteria({ speakWord }) {
 
         return newMarked;
       });
-
     } else {
-      // 👉 si falla → voz
       speakWord(item.word);
     }
   };
@@ -121,8 +120,11 @@ export default function Loteria({ speakWord }) {
                 justifyContent: "center",
                 cursor: "pointer",
                 position: "relative",
-                transition: "transform 0.2s",
-                transform: isMarked ? "scale(1.05)" : "scale(1)"
+                transition: "all 0.3s",
+                transform: isMarked ? "scale(1.08)" : "scale(1)",
+                boxShadow: isMarked
+                  ? "0 0 15px rgba(34,197,94,0.8)"
+                  : "none"
               }}
             >
               <img
