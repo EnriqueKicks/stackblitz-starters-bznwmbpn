@@ -82,6 +82,7 @@ export default function App() {
         {mode === "practice" && <Practice speakWord={speakWord} />}
         {mode === "exam" && <Exam speakWord={speakWord} count={20} />}
         {mode === "memory" && <MemoryGame speakWord={speakWord} />}
+        {mode === "loteria" && <Loteria speakWord={speakWord} />}
       </main>
     </div>
   );
