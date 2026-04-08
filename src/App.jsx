@@ -73,6 +73,7 @@ export default function App() {
               <button onClick={() => setMode("practice")}>Modo Práctica</button>
               <button onClick={() => setMode("exam")}>Modo Examen (20)</button>
               <button onClick={() => setMode("memory")}>🧠 Memorama</button>
+              <button onClick={() => setMode("loteria")}>🪅 Lotería</button>
             </div>
           </div>
         )}
