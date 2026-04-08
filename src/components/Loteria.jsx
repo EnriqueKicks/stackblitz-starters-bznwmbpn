@@ -38,15 +38,19 @@ export default function Loteria({ speakWord }) {
   }, []);
 
   const handleClick = (item) => {
-    speakWord(item.word);
 
-    if (!currentWord || completed) return;
+    // 👉 si ya terminó o no hay palabra → solo repetir
+    if (!currentWord || completed) {
+      speakWord(item.word);
+      return;
+    }
 
+    // 👉 si acierta
     if (item.word === currentWord.word) {
       setMarked(prev => {
         if (prev.includes(item.word)) return prev;
 
-        successSound.play(); // 🔊 sonido
+        successSound.play(); // 🔊 SOLO sonido (ya no voz)
 
         const newMarked = [...prev, item.word];
 
@@ -58,6 +62,10 @@ export default function Loteria({ speakWord }) {
 
         return newMarked;
       });
+
+    } else {
+      // 👉 si falla → voz
+      speakWord(item.word);
     }
   };
 
@@ -76,7 +84,6 @@ export default function Loteria({ speakWord }) {
         </div>
       )}
 
-      {/* 🎉 CONFETTI SIMULADO */}
       {completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
           <h3>🎉 ¡LOTERÍA! 🎉</h3>
