@@ -8,11 +8,16 @@ export default function Loteria({ speakWord }) {
   const [marked, setMarked] = useState([]);
   const [completed, setCompleted] = useState(false);
 
+  const [streak, setStreak] = useState(0); // 🔥 RACHA
+
   const successSound = new Audio("/success.mp3");
   successSound.volume = 0.5;
 
   const winSound = new Audio("/win.mp3");
   winSound.volume = 0.6;
+
+  const streakSound = new Audio("/correct.mp3"); // 🔥 puedes cambiar luego
+  streakSound.volume = 0.7;
 
   const launchConfetti = () => {
     confetti({
@@ -31,6 +36,7 @@ export default function Loteria({ speakWord }) {
     setBoard(selected);
     setMarked([]);
     setCompleted(false);
+    setStreak(0); // reset racha
 
     pickWord(selected, []);
   };
@@ -63,9 +69,20 @@ export default function Loteria({ speakWord }) {
 
         const newMarked = [...prev, item.word];
 
+        // 🔥 SUMAR RACHA
+        setStreak(prevStreak => {
+          const newStreak = prevStreak + 1;
+
+          if (newStreak === 3) {
+            streakSound.play(); // 🔥 sonido especial
+          }
+
+          return newStreak;
+        });
+
         if (newMarked.length === board.length) {
           winSound.play();
-          launchConfetti(); // 🎉 AQUÍ DISPARA
+          launchConfetti();
           setCompleted(true);
         } else {
           pickWord(board, newMarked);
@@ -75,12 +92,18 @@ export default function Loteria({ speakWord }) {
       });
     } else {
       speakWord(item.word);
+      setStreak(0); // ❌ rompe racha
     }
   };
 
   return (
     <div className="card">
       <h2>Lotería 🪅</h2>
+
+      {/* 🔥 MOSTRAR RACHA */}
+      <div style={{ marginBottom: 10 }}>
+        🔥 Racha: {streak}
+      </div>
 
       {currentWord && !completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
@@ -96,6 +119,10 @@ export default function Loteria({ speakWord }) {
       {completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
           <h3>🎉 ¡LOTERÍA! 🎉</h3>
+
+          <div style={{ fontSize: "30px", margin: "10px 0" }}>
+            🎊 🎉 ✨ 🎊 🎉 ✨
+          </div>
 
           <button onClick={generateBoard}>
             🔁 Nuevo juego
