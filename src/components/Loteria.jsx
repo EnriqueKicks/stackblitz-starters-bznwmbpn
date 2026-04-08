@@ -7,7 +7,6 @@ export default function Loteria({ speakWord }) {
   const [marked, setMarked] = useState([]);
   const [completed, setCompleted] = useState(false);
 
-  // 🎯 GENERAR TABLERO 3x3
   const generateBoard = () => {
     const selected = words
       .slice()
@@ -18,12 +17,16 @@ export default function Loteria({ speakWord }) {
     setMarked([]);
     setCompleted(false);
 
-    pickWord(selected);
+    pickWord(selected, []);
   };
 
-  // 🔊 ELEGIR PALABRA
-  const pickWord = (list = board) => {
-    const random = list[Math.floor(Math.random() * list.length)];
+  // 🔥 SOLO PALABRAS NO MARCADAS
+  const pickWord = (list = board, markedList = marked) => {
+    const available = list.filter(w => !markedList.includes(w.word));
+
+    if (available.length === 0) return;
+
+    const random = available[Math.floor(Math.random() * available.length)];
     setCurrentWord(random);
     speakWord(random.word);
   };
@@ -32,26 +35,27 @@ export default function Loteria({ speakWord }) {
     generateBoard();
   }, []);
 
-  // 🎮 CLICK EN CARTA
   const handleClick = (item) => {
-    // 🔊 repetir sonido siempre
     speakWord(item.word);
 
     if (!currentWord || completed) return;
 
-    // ✅ si acierta
     if (item.word === currentWord.word) {
-      if (!marked.includes(item.word)) {
-        const newMarked = [...marked, item.word];
-        setMarked(newMarked);
+      setMarked(prev => {
+        if (prev.includes(item.word)) return prev;
 
-        // 🏆 ganar
+        const newMarked = [...prev, item.word];
+
+        // 🏆 GANAR
         if (newMarked.length === board.length) {
           setCompleted(true);
         } else {
-          pickWord();
+          // 🔥 IMPORTANTE: usar newMarked actualizado
+          pickWord(board, newMarked);
         }
-      }
+
+        return newMarked;
+      });
     }
   };
 
@@ -59,7 +63,6 @@ export default function Loteria({ speakWord }) {
     <div className="card">
       <h2>Lotería 🪅</h2>
 
-      {/* 🔊 PALABRA ACTUAL */}
       {currentWord && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
           <div className="small">Escucha y busca:</div>
@@ -71,7 +74,6 @@ export default function Loteria({ speakWord }) {
         </div>
       )}
 
-      {/* 🏆 GANASTE */}
       {completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
           <h3>🎉 ¡LOTERÍA!</h3>
@@ -82,7 +84,6 @@ export default function Loteria({ speakWord }) {
         </div>
       )}
 
-      {/* 🎲 TABLERO */}
       <div
         style={{
           display: "grid",
