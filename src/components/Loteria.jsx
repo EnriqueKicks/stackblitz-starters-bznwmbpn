@@ -9,7 +9,10 @@ export default function Loteria({ speakWord }) {
   const [completed, setCompleted] = useState(false);
 
   const [streak, setStreak] = useState(0);
-  const [bestStreak, setBestStreak] = useState(0); // 🏆 NUEVO
+  const [bestStreak, setBestStreak] = useState(0);
+
+  const [playerName, setPlayerName] = useState("");
+  const [leaderboard, setLeaderboard] = useState([]);
 
   const successSound = new Audio("/success.mp3");
   successSound.volume = 0.5;
@@ -28,15 +31,34 @@ export default function Loteria({ speakWord }) {
     });
   };
 
-  // 🏆 CARGAR RECORD
+  // 🏆 cargar datos guardados
   useEffect(() => {
-    const saved = localStorage.getItem("bestStreak");
-    if (saved) setBestStreak(Number(saved));
+    const savedBest = localStorage.getItem("bestStreak");
+    if (savedBest) setBestStreak(Number(savedBest));
+
+    const savedBoard = localStorage.getItem("leaderboard");
+    if (savedBoard) setLeaderboard(JSON.parse(savedBoard));
   }, []);
 
   const saveBestStreak = (value) => {
     localStorage.setItem("bestStreak", value);
     setBestStreak(value);
+  };
+
+  const saveScore = () => {
+    if (!playerName) return;
+
+    const newEntry = {
+      name: playerName,
+      score: streak
+    };
+
+    const updated = [...leaderboard, newEntry]
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+
+    localStorage.setItem("leaderboard", JSON.stringify(updated));
+    setLeaderboard(updated);
   };
 
   const generateBoard = (keepStreak = false) => {
@@ -87,12 +109,10 @@ export default function Loteria({ speakWord }) {
         setStreak(prevStreak => {
           const newStreak = prevStreak + 1;
 
-          // 🔥 sonido racha
           if (newStreak === 3) {
             streakSound.play();
           }
 
-          // 🏆 actualizar récord
           if (newStreak > bestStreak) {
             saveBestStreak(newStreak);
           }
@@ -120,12 +140,20 @@ export default function Loteria({ speakWord }) {
     <div className="card">
       <h2>Lotería 🪅</h2>
 
-      {/* 🔥 RACHA */}
-      <div style={{ marginBottom: 5 }}>
-        🔥 Racha: {streak}
+      {/* 👤 NOMBRE */}
+      <div style={{ marginBottom: 10 }}>
+        <input
+          placeholder="Tu nombre (ej: ANA)"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+          className="input"
+        />
       </div>
 
-      {/* 🏆 MEJOR RACHA */}
+      {/* 🔥 RACHA */}
+      <div>🔥 Racha: {streak}</div>
+
+      {/* 🏆 RECORD */}
       <div style={{ marginBottom: 10 }}>
         🏆 Mejor racha: {bestStreak}
       </div>
@@ -149,7 +177,7 @@ export default function Loteria({ speakWord }) {
             🎊 🎉 ✨ 🎊 🎉 ✨
           </div>
 
-          <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap:"wrap" }}>
             
             <button onClick={() => generateBoard(false)}>
               🔁 Nuevo juego
@@ -159,10 +187,15 @@ export default function Loteria({ speakWord }) {
               ➡️ Continuar racha
             </button>
 
+            <button onClick={saveScore}>
+              💾 Guardar puntuación
+            </button>
+
           </div>
         </div>
       )}
 
+      {/* 🎮 TABLERO */}
       <div
         style={{
           display: "grid",
@@ -218,6 +251,21 @@ export default function Loteria({ speakWord }) {
             </div>
           );
         })}
+      </div>
+
+      {/* 🏆 RANKING */}
+      <div style={{ marginTop: 20 }}>
+        <h3>🏆 Ranking</h3>
+
+        {leaderboard.length === 0 && (
+          <div className="small">Sin registros aún</div>
+        )}
+
+        {leaderboard.map((p, i) => (
+          <div key={i}>
+            {i + 1}. {p.name} - {p.score}
+          </div>
+        ))}
       </div>
     </div>
   );
