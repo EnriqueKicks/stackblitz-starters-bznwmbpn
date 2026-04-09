@@ -9,6 +9,7 @@ export default function Loteria({ speakWord }) {
   const [completed, setCompleted] = useState(false);
 
   const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0); // 🏆 NUEVO
 
   const successSound = new Audio("/success.mp3");
   successSound.volume = 0.5;
@@ -27,6 +28,17 @@ export default function Loteria({ speakWord }) {
     });
   };
 
+  // 🏆 CARGAR RECORD
+  useEffect(() => {
+    const saved = localStorage.getItem("bestStreak");
+    if (saved) setBestStreak(Number(saved));
+  }, []);
+
+  const saveBestStreak = (value) => {
+    localStorage.setItem("bestStreak", value);
+    setBestStreak(value);
+  };
+
   const generateBoard = (keepStreak = false) => {
     const selected = words
       .slice()
@@ -38,7 +50,7 @@ export default function Loteria({ speakWord }) {
     setCompleted(false);
 
     if (!keepStreak) {
-      setStreak(0); // 🔁 reset solo si NO continúa
+      setStreak(0);
     }
 
     pickWord(selected, []);
@@ -75,8 +87,14 @@ export default function Loteria({ speakWord }) {
         setStreak(prevStreak => {
           const newStreak = prevStreak + 1;
 
+          // 🔥 sonido racha
           if (newStreak === 3) {
             streakSound.play();
+          }
+
+          // 🏆 actualizar récord
+          if (newStreak > bestStreak) {
+            saveBestStreak(newStreak);
           }
 
           return newStreak;
@@ -103,8 +121,13 @@ export default function Loteria({ speakWord }) {
       <h2>Lotería 🪅</h2>
 
       {/* 🔥 RACHA */}
-      <div style={{ marginBottom: 10 }}>
+      <div style={{ marginBottom: 5 }}>
         🔥 Racha: {streak}
+      </div>
+
+      {/* 🏆 MEJOR RACHA */}
+      <div style={{ marginBottom: 10 }}>
+        🏆 Mejor racha: {bestStreak}
       </div>
 
       {currentWord && !completed && (
@@ -118,7 +141,6 @@ export default function Loteria({ speakWord }) {
         </div>
       )}
 
-      {/* 🎉 GANASTE */}
       {completed && (
         <div style={{ textAlign: "center", marginBottom: 15 }}>
           <h3>🎉 ¡LOTERÍA! 🎉</h3>
@@ -129,12 +151,10 @@ export default function Loteria({ speakWord }) {
 
           <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
             
-            {/* 🔁 NUEVO JUEGO (RESET TOTAL) */}
             <button onClick={() => generateBoard(false)}>
               🔁 Nuevo juego
             </button>
 
-            {/* 🔥 CONTINUAR RACHA */}
             <button onClick={() => generateBoard(true)}>
               ➡️ Continuar racha
             </button>
