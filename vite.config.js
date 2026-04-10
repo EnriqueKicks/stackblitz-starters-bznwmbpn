@@ -1,10 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+// import { VitePWA } from 'vite-plugin-pwa' // 🔥 DESACTIVADO TEMPORALMENTE
 
 export default defineConfig({
   plugins: [
     react(),
+
+    // 🔥 PWA DESACTIVADA PARA EVITAR ERRORES EN INSTALACIÓN
+    /*
     VitePWA({
       registerType: 'autoUpdate',
 
@@ -33,5 +36,6 @@ export default defineConfig({
         ]
       }
     })
+    */
   ]
 })
