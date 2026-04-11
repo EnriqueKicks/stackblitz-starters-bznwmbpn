@@ -31,7 +31,6 @@ export default function Loteria({ speakWord }) {
     });
   };
 
-  // 🏆 cargar datos guardados
   useEffect(() => {
     const savedBest = localStorage.getItem("bestStreak");
     if (savedBest) setBestStreak(Number(savedBest));
@@ -61,6 +60,7 @@ export default function Loteria({ speakWord }) {
     setLeaderboard(updated);
   };
 
+  // 🔥 GENERAR TABLERO NUEVO SIEMPRE
   const generateBoard = (keepStreak = false) => {
     const selected = words
       .slice()
@@ -75,10 +75,13 @@ export default function Loteria({ speakWord }) {
       setStreak(0);
     }
 
-    pickWord(selected, []);
+    // 🔥 IMPORTANTE: esperar render antes de elegir palabra
+    setTimeout(() => {
+      pickWord(selected, []);
+    }, 100);
   };
 
-  const pickWord = (list = board, markedList = marked) => {
+  const pickWord = (list, markedList) => {
     const available = list.filter(w => !markedList.includes(w.word));
 
     if (available.length === 0) return;
@@ -93,10 +96,10 @@ export default function Loteria({ speakWord }) {
   }, []);
 
   const handleClick = (item) => {
-    if (!currentWord || completed) {
-      speakWord(item.word);
-      return;
-    }
+    // 🔊 SIEMPRE reproducir al tocar
+    speakWord(item.word);
+
+    if (!currentWord || completed) return;
 
     if (item.word === currentWord.word) {
       setMarked(prev => {
@@ -131,7 +134,6 @@ export default function Loteria({ speakWord }) {
         return newMarked;
       });
     } else {
-      speakWord(item.word);
       setStreak(0);
     }
   };
@@ -140,7 +142,6 @@ export default function Loteria({ speakWord }) {
     <div className="card">
       <h2>Lotería 🪅</h2>
 
-      {/* 👤 NOMBRE */}
       <div style={{ marginBottom: 10 }}>
         <input
           placeholder="Tu nombre (ej: ANA)"
@@ -150,10 +151,8 @@ export default function Loteria({ speakWord }) {
         />
       </div>
 
-      {/* 🔥 RACHA */}
       <div>🔥 Racha: {streak}</div>
 
-      {/* 🏆 RECORD */}
       <div style={{ marginBottom: 10 }}>
         🏆 Mejor racha: {bestStreak}
       </div>
@@ -195,7 +194,6 @@ export default function Loteria({ speakWord }) {
         </div>
       )}
 
-      {/* 🎮 TABLERO */}
       <div
         style={{
           display: "grid",
@@ -203,12 +201,12 @@ export default function Loteria({ speakWord }) {
           gap: "10px"
         }}
       >
-        {board.map((item, i) => {
+        {board.map((item) => {
           const isMarked = marked.includes(item.word);
 
           return (
             <div
-              key={i}
+              key={item.word} // 🔥 CORREGIDO
               onClick={() => handleClick(item)}
               style={{
                 height: "100px",
@@ -253,7 +251,6 @@ export default function Loteria({ speakWord }) {
         })}
       </div>
 
-      {/* 🏆 RANKING */}
       <div style={{ marginTop: 20 }}>
         <h3>🏆 Ranking</h3>
 
