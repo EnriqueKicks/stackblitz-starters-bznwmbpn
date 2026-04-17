@@ -4,6 +4,7 @@ import Practice from "./components/Practice";
 import Exam from "./components/Exam";
 import MemoryGame from "./components/MemoryGame";
 import Loteria from "./components/Loteria";
+import MusicMode from "./modes/MusicMode";
 
 function speakWord(word, mode = "normal") {
 
@@ -60,6 +61,7 @@ export default function App() {
           <button className={mode === "exam" ? "active" : ""} onClick={() => setMode("exam")}>Examen</button>
           <button className={mode === "memory" ? "active" : ""} onClick={() => setMode("memory")}>🧠 Memorama</button>
           <button className={mode === "loteria" ? "active" : ""} onClick={() => setMode("loteria")}>🪅 Lotería</button>
+          <button className={mode === "music" ? "active" : ""} onClick={() => setMode("music")}>🎵 Música</button>
         </nav>
       </header>
 
@@ -74,6 +76,7 @@ export default function App() {
               <button onClick={() => setMode("exam")}>Modo Examen (20)</button>
               <button onClick={() => setMode("memory")}>🧠 Memorama</button>
               <button onClick={() => setMode("loteria")}>🪅 Lotería</button>
+              <button onClick={() => setMode("music")}>🎵 Música</button>
             </div>
           </div>
         )}
@@ -83,6 +86,7 @@ export default function App() {
         {mode === "exam" && <Exam speakWord={speakWord} count={20} />}
         {mode === "memory" && <MemoryGame speakWord={speakWord} />}
         {mode === "loteria" && <Loteria speakWord={speakWord} />}
+        {mode === "music" && <MusicMode />}
       </main>
     </div>
   );
