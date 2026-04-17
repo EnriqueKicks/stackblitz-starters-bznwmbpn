@@ -2,19 +2,18 @@ import { useState } from "react";
 
 const questions = [
   {
-    sentence: "I'm sitting in a boring ____",
+    full: "I'm sitting in a boring room",
+    display: "I'm sitting in a boring ____",
     correct: "room",
     options: ["room", "car", "house"],
+    audio: "/audio/song1.mp3",
   },
   {
-    sentence: "I see a little ____ in the sky",
+    full: "I see a little bird in the sky",
+    display: "I see a little ____ in the sky",
     correct: "bird",
     options: ["plane", "bird", "star"],
-  },
-  {
-    sentence: "She is singing a beautiful ____",
-    correct: "song",
-    options: ["song", "dance", "game"],
+    audio: "/audio/song2.mp3",
   },
 ];
 
@@ -22,18 +21,14 @@ export default function MusicMode() {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [result, setResult] = useState(null);
-
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
 
   const question = questions[current];
 
-  const speak = () => {
-    const utterance = new SpeechSynthesisUtterance(
-      question.sentence.replace("____", "")
-    );
-    utterance.lang = "en-US";
-    speechSynthesis.speak(utterance);
+  const playAudio = () => {
+    const audio = new Audio(question.audio);
+    audio.play();
   };
 
   const handleAnswer = (option) => {
@@ -56,7 +51,7 @@ export default function MusicMode() {
     if (current < questions.length - 1) {
       setCurrent(current + 1);
     } else {
-      alert(`🎉 Juego terminado\nPuntos: ${score}\nMejor racha: ${streak}`);
+      alert(`🎉 Juego terminado\nPuntos: ${score}`);
       setCurrent(0);
       setScore(0);
       setStreak(0);
@@ -71,11 +66,11 @@ export default function MusicMode() {
       <h4>🔥 Racha: {streak}</h4>
 
       <p style={{ fontSize: "22px", marginBottom: "20px" }}>
-        {question.sentence}
+        {question.display}
       </p>
 
-      <button onClick={speak} style={{ marginBottom: "20px" }}>
-        🔊 Escuchar
+      <button onClick={playAudio} style={{ marginBottom: "20px" }}>
+        ▶️ Reproducir canción
       </button>
 
       <div>
