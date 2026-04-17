@@ -11,12 +11,20 @@ const questions = [
     correct: "bird",
     options: ["plane", "bird", "star"],
   },
+  {
+    sentence: "She is singing a beautiful ____",
+    correct: "song",
+    options: ["song", "dance", "game"],
+  },
 ];
 
 export default function MusicMode() {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [result, setResult] = useState(null);
+
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
 
   const question = questions[current];
 
@@ -33,8 +41,11 @@ export default function MusicMode() {
 
     if (option === question.correct) {
       setResult("correct");
+      setScore(score + 10);
+      setStreak(streak + 1);
     } else {
       setResult("wrong");
+      setStreak(0);
     }
   };
 
@@ -45,14 +56,19 @@ export default function MusicMode() {
     if (current < questions.length - 1) {
       setCurrent(current + 1);
     } else {
-      alert("🎉 Terminaste el modo música");
+      alert(`🎉 Juego terminado\nPuntos: ${score}\nMejor racha: ${streak}`);
       setCurrent(0);
+      setScore(0);
+      setStreak(0);
     }
   };
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>🎵 Music Mode</h2>
+
+      <h3>⭐ Puntos: {score}</h3>
+      <h4>🔥 Racha: {streak}</h4>
 
       <p style={{ fontSize: "22px", marginBottom: "20px" }}>
         {question.sentence}
